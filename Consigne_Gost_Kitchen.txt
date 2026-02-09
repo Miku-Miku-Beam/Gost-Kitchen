@@ -1,0 +1,57 @@
+Vous reprenez un restaurant légendaire « La tour d’émeraude », mais le chef précédent est parti avec le livre de recettes !
+Vos placards, vos frigos, tout est vide. Vous avez une heure avant l’ouverture, les clients vont affluer et commander des plats précis, mais vous ne connaissez même pas les ingrédients.
+
+Vous devez gérer une Ghost Kitchen sous pression :
+
+1. Acheter vos stocks intelligemment.
+2. Redécouvrir les recettes en expérimentant au laboratoire.
+3. Servir les clients en temps réel pour éviter la faillite.
+
+
+Stack Technique : React, Node.js, SQL (Postgres/MySQL) ou Mongo, Socket.io.
+
+---
+
+ 1. Cahier des Charges Fonctionnel
+
+ A. Accès & Sauvegarde (Authentification)
+
+Connexion / Inscription : Le joueur doit créer un compte pour gérer son restaurant, sa partie doit être persistée.
+
+ B. Le Laboratoire (Core Gameplay)
+
+Marketplace : Acheter des ingrédients qui s'ajoutent au stock.
+Expérimentation : Le joueur combine des ingrédients.
+=>Succès : Combinaison valide -> Recette débloquée dans la stack de préparation.
+=>Échec : Combinaison invalide -> Ingrédients détruits.
+
+ C. Le Service (Temps Réel)
+
+Flux de Commandes : Le serveur envoie des commandes via WebSockets.
+Service : Pour servir, le joueur doit avoir débloqué la recette ET avoir le stock suffisant.
+Économie : Achat = Dépense et Service = Gain. Game Over si Trésorerie < 0.
+
+
+ 2. Grille de Notation Progressive
+
+Le rendu sera : lien GitHub/GitLab, avec procédure d’installation/lancement, document (readme/pdf) d’architecture (diagramme d’archi, DDC…), explication du travail effectué (-1 si absence).
+Le sujet sera présenté vendredi devant groupe observateur.
+Le rendu final sera dimanche soir 23H55.
+
+ Niveau 10/20 : "Niveau Cuisinier" (MVP avec Auth)
+
+Le jeu est jouable et la progression est sauvegardée.
+
+ Authentification (JWT) :
+ Formulaire d'Inscription (Nom du resto, Email, Password haché).
+ Login (Génération d'un Token JWT).
+ Protection des routes (Impossible de jouer sans être connecté).
+
+ Le Labo (Discovery) :
+ Interface Drag & Drop.
+ Algo de Matching (Comparaison Ingrédients vs Recette).
+ Sauvegarde des recettes trouvées en base.
+Livre recettes disponibles.
+
+=>A ce niveau, pas de notion d'argent, quantité d'ingrédient illimité (en stock ou à l'ajout).
+Pas de notion de commande.
