@@ -7,6 +7,7 @@
     "dev": "vite",
     "server": "nodemon",
     "dev:full": "concurrently \"npm run dev\" \"npm run server\"",
+    "seed": "tsx server/src/seeds/seedData.ts",
     "build": "tsc && vite build"
   },
   "dependencies": {

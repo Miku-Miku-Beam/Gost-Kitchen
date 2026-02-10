@@ -20,7 +20,6 @@ const ingredientSchema = new Schema<IIngredient>({
       "légume",
       "viande",
       "poisson",
-      "épice",
       "produit laitier",
       "féculent",
       "autre",
