@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import monlogo from './assets/logo poèle.svg' ;
 
 const LoginForm: React.FC = () => {
   const [identifiant, setIdentifiant] = useState('');
@@ -32,7 +33,7 @@ const LoginForm: React.FC = () => {
   };
 
   
-  const titleStyle: React.CSSProperties = {
+  const logoStyle: React.CSSProperties = {
     fontSize: '2rem', 
     color: '#000000', 
     marginBottom: '40px',
@@ -86,8 +87,8 @@ const LoginForm: React.FC = () => {
     <div style={containerStyle}>
       <div style={cardStyle}>
         
-        {/* Titre ou Logo ici */}
-        <h1 style={titleStyle}>Bienvenue</h1>
+        {/* Logo ici */}
+        <h1 style={logoStyle}></h1>
 
         {/* Champ Identifiant */}
         <div style={inputContainerStyle}>
