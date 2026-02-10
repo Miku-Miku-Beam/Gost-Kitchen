@@ -1,21 +1,36 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-export interface IUserProgress extends Document {
-  userId: mongoose.Types.ObjectId;
-  discoveredRecipes: mongoose.Types.ObjectId[];
+export interface IUser extends Document {
+  restaurantName: string;
+  email: string;
+  password: string;
+  createdAt: Date;
 }
 
-const UserProgressSchema: Schema<IUserProgress> = new Schema({
-  userId: {
-    type: mongoose.Types.ObjectId,
-    ref: "User",
-    required: true,
-    unique: true,
+const userSchema = new Schema<IUser>({
+  restaurantName: {
+    type: String,
+    required: [true, "Le nom du restaurant est requis"],
+    trim: true,
+    minlength: [3, "Le nom doit contenir au moins 3 caractères"],
   },
-  discoveredRecipes: [{ type: mongoose.Types.ObjectId, ref: "Recipe" }],
+  email: {
+    type: String,
+    required: [true, "L'email est requis"],
+    unique: true,
+    lowercase: true,
+    trim: true,
+    match: [/^\S+@\S+\.\S+$/, "Email invalide"],
+  },
+  password: {
+    type: String,
+    required: [true, "Le mot de passe est requis"],
+    minlength: [6, "Le mot de passe doit contenir au moins 6 caractères"],
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
-export const UserProgress = mongoose.model<IUserProgress>(
-  "UserProgress",
-  UserProgressSchema,
-);
+export default mongoose.model<IUser>("User", userSchema);
