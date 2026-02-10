@@ -1,16 +1,5 @@
 import './App.css'
 
-function App() {
-
-  return (
-    <>
-      <div>
-        <Rectangle/>
-      </div>
-    </>
-  )
-}
-
 const Rectangle: React.FC = () => {
   
   const containerStyle: React.CSSProperties = {
@@ -43,6 +32,17 @@ const Rectangle: React.FC = () => {
     </div>
   );
 };
+
+function App() {
+
+  return (
+    <>
+      <div>
+        <Rectangle/>
+      </div>
+    </>
+  )
+}
 
 export { Rectangle};
 export default App
