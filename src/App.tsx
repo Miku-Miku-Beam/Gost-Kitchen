@@ -8,25 +8,27 @@ const LoginForm: React.FC = () => {
 
   const containerStyle: React.CSSProperties = {
     display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: '100vh',
+    justifyContent: 'center', 
+    alignItems: 'center',     
+    minHeight: '100vh',       
+    width: '100vw',           
     fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+    margin: 0,
+    padding: 0,
   };
 
   const cardStyle: React.CSSProperties = {
-    
     width: '598px',
     height: '691px',
     borderRadius: '74px',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#D9D9D9',
     boxShadow: '0 50px 50px rgba(0,0,0,0.1)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     padding: '40px',
-
+    boxSizing: 'border-box' 
   };
 
   
@@ -39,7 +41,9 @@ const LoginForm: React.FC = () => {
 
   const inputContainerStyle: React.CSSProperties = {
     width: '80%',
-    marginBottom: '20px'
+    marginBottom: '20px',
+    alignItems: 'center',
+    justifyContent: 'center',
   };
 
   const labelStyle: React.CSSProperties = {
