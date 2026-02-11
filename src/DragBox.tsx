@@ -1,11 +1,11 @@
 import React, { useState, useRef } from 'react';
 
 const DragBox: React.FC = () => {
-  // État pour la position (x, y)
-  const [position, setPosition] = useState({ x: 200, y: 300 });
+  // État pour la position (x, y)(position au chargement de la page)
+  const [position, setPosition] = useState({ x: 50, y: 180 });
   const [isDragging, setIsDragging] = useState(false);
   
-  // Ref pour stocker l'écart entre le curseur et le bord de la boîte
+  // Ref pour stocker l'écart entre le curseur et le bord de la boîte (et pas stopé hahaha)
   const offset = useRef({ x: 0, y: 0 });
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -43,15 +43,15 @@ const DragBox: React.FC = () => {
     justifyContent: 'center',
     boxShadow: '0 15px 30px rgba(0,0,0,0.4)',
     zIndex: 1000,
-    userSelect: 'none', // Empêche de sélectionner le texte en glissant
-    transition: isDragging ? 'none' : 'transform 0.1s ease', // Fluidité
+    userSelect: 'none', // Empêche de sélectionner le texte en glissant (sinon c'est chiant de fou)
+    transition: isDragging ? 'none' : 'transform 0.1s ease', // Fluidité est mer de sureté
   };
 
   return (
     <div 
       style={floatStyle}
       onMouseDown={handleMouseDown}
-      // On attache les mouvements au parent ou on utilise une astuce globale
+      // On attache les mouvements au parent ou on utilise une astuce globale pour pas nous casser les noix
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
