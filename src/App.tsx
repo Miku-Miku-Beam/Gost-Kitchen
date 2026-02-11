@@ -88,7 +88,9 @@ const LoginForm: React.FC = () => {
       <div style={cardStyle}>
         
         {/* Logo ici */}
-        <h1 style={logoStyle}></h1>
+        <h1 style={logoStyle}>
+          <img src={monlogo} alt="Logo" style={logoStyle} />
+        </h1>
 
         {/* Champ Identifiant */}
         <div style={inputContainerStyle}>
@@ -119,6 +121,7 @@ const LoginForm: React.FC = () => {
           style={buttonStyle}
           onMouseOver={(e) => (e.currentTarget.style.transform = 'scale(1.02)')}
           onMouseOut={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+          
         >
           Se connecter
         </button>
