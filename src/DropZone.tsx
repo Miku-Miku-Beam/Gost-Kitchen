@@ -8,7 +8,7 @@ const DropZone: React.FC = () => {
     width: '800px',
     height: '380px',
     border: '3px dashed #A88752',
-    borderRadius: '15px',
+    borderRadius: '20px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
