@@ -5,6 +5,18 @@ import Ingredient from "../models/Ingredient";
 import Recipe from "../models/Recipe";
 import { UserProgress } from "../models/UserProgress";
 
+interface PopulatedIngredient {
+  _id: mongoose.Types.ObjectId;
+  name: string;
+  category: string;
+}
+
+const isPopulatedIngredient = (
+  ingredient: mongoose.Types.ObjectId | PopulatedIngredient,
+): ingredient is PopulatedIngredient => {
+  return typeof ingredient === "object" && "_id" in ingredient;
+};
+
 // Get ingredients list
 export const getIngredients = async (
   req: AuthRequest,
@@ -55,7 +67,12 @@ export const experimentRecipe = async (
     for (const recipe of recipes) {
       // Extraire les IDs d'ingrédients de la recette
       const recipeIngredientIds = recipe.ingredients
-        .map((ing) => ing.ingredientId.toString())
+        .map((ing) => {
+          if (isPopulatedIngredient(ing.ingredientId)) {
+            return ing.ingredientId._id.toString();
+          }
+          return ing.ingredientId.toString();
+        })
         .sort();
 
       // Trier les IDs fournis par le joueur
