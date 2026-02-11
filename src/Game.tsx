@@ -5,22 +5,9 @@ const Game: React.FC = () => {
   const navigate = useNavigate();
 
   const containerStyle: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    color: 'white',
-    fontFamily: 'Arial, sans-serif'
   };
 
   const buttonStyle: React.CSSProperties = {
-    marginTop: '20px',
-    padding: '10px 20px',
-    cursor: 'pointer',
-    borderRadius: '8px',
-    border: 'none',
-    backgroundColor: '#61dafb',
-    fontWeight: 'bold'
   };
 
   return (
