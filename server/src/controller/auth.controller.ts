@@ -55,6 +55,7 @@ export const register = async (
     await UserProgress.create({
       userId: user._id,
       discoveredRecipes: [],
+      satisfaction: 20,
     });
 
     // Générer le token JWT
