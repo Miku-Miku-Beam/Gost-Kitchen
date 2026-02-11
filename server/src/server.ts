@@ -3,13 +3,13 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { connectDB } from "./config/database";
 import authRoutes from "./routes/auth.routes";
+import laboratoryRoutes from "./routes/laboratory.routes";
 
 dotenv.config({ path: "./server/.env" });
 
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
 
-// Middlewares
 app.use(
   cors({
     origin: "http://localhost:5173", // URL de ton frontend Vite
@@ -21,6 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/laboratory", laboratoryRoutes);
 
 // Route de test
 app.get("/api/health", (req, res) => {
