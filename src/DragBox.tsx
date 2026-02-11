@@ -33,10 +33,10 @@ const DragBox: React.FC = () => {
     position: 'absolute',
     left: `${position.x}px`,
     top: `${position.y}px`,
-    width: '200px',
-    height: '120px',
+    width: '160px',
+    height: '160px',
     backgroundColor: 'rgba(10, 10, 10, 0.9)',
-    borderRadius: '15px',
+    borderRadius: '100px',
     cursor: isDragging ? 'grabbing' : 'grab',
     display: 'flex',
     alignItems: 'center',
@@ -57,7 +57,7 @@ const DragBox: React.FC = () => {
       onMouseLeave={handleMouseUp}
     >
       <div style={{ textAlign: 'center', color: '#D9D9D9', fontWeight: 'bold' }}>
-        <span style={{ fontSize: '0.8rem', fontWeight: 'normal' }}>Glisse-moi !</span>
+        <span style={{ fontSize: '1 rem', fontWeight: 'normal' }}>Glisse-moi !</span>
       </div>
     </div>
   );
