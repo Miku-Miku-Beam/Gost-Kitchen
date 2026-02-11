@@ -25,8 +25,18 @@ const DragBox: React.FC = () => {
     });
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (e: React.MouseEvent) => {
     setIsDragging(false);
+
+    // Vérification de la position
+    const thresholdX = window.innerWidth - 250;
+    const thresholdY = window.innerHeight - 150;
+
+    if (e.clientX > thresholdX && e.clientY > thresholdY) {
+      // Fixer le rectangle dans la zone
+      setPosition({ x: window.innerWidth - 225, y: window.innerHeight - 140 });
+      alert("Objet déposé avec succès !");
+    };
   };
 
   const floatStyle: React.CSSProperties = {

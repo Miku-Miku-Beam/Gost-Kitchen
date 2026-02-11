@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import retour from './assets/retour.png' ;
 import Marcket from './assets/Market Icon.png';
 import DragBox from './DragBox';
+import DropZone from './DropZone';
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -95,6 +96,7 @@ const Game: React.FC = () => {
         <div style = {depthBannerStyle}>
         </div>
         <DragBox/>
+        <DropZone/>
       </div>
       
     </div>
