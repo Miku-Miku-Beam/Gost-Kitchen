@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import retour from './assets/retour.png' ;
 
 const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -10,13 +11,13 @@ const Game: React.FC = () => {
   const buttonStyle: React.CSSProperties = {
   };
 
+  const logoStyle: React.CSSProperties= {
+  };
+
   return (
     <div style={containerStyle}>
-      <h1>🎮 Bienvenue dans le Jeu</h1>
-      <p>La partie commence bientôt...</p>
-      
       <button style={buttonStyle} onClick={() => navigate('/')}>
-        Retour à la connexion
+        <img src = {retour} style={logoStyle}/>
       </button>
     </div>
   );
