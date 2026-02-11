@@ -27,16 +27,30 @@ const DragBox: React.FC = () => {
 
   const handleMouseUp = (e: React.MouseEvent) => {
     setIsDragging(false);
+  
+    const zoneWidth = 800;
+    const zoneHeight = 380;
+    const marginRight = 50;
+    const marginTop = 180;
 
     // Vérification de la position
-    const thresholdX = window.innerWidth - 250;
-    const thresholdY = window.innerHeight - 150;
+    const minX = window.innerWidth - (zoneWidth + marginRight);
+    const maxX = window.innerWidth - marginRight;               
+    const minY = marginTop;                                     
+    const maxY = marginTop + zoneHeight;
 
-    if (e.clientX > thresholdX && e.clientY > thresholdY) {
-      // Fixer le rectangle dans la zone
-      setPosition({ x: window.innerWidth - 225, y: window.innerHeight - 140 });
-      alert("Objet déposé avec succès !");
-    };
+    // Vérifier si la souris est à l'intérieur au moment du lâcher
+  if (e.clientX > minX && e.clientX < maxX && e.clientY > minY && e.clientY < maxY) {
+    
+    // Centrer le rond (160x160) au milieu de la DropZone (800x380)
+    // Calcul pour centrer parfaitement : 
+    // X = minX + (LargeurZone / 2) - (LargeurRond / 2)
+    const centerX = minX + (zoneWidth / 2) - 80; 
+    const centerY = minY + (zoneHeight / 2) - 80;
+
+    setPosition({ x: centerX, y: centerY });
+    alert("Bravo ! L'objet est dans la zone.");
+  }
   };
 
   const floatStyle: React.CSSProperties = {
