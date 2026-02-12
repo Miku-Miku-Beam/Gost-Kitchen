@@ -9,12 +9,12 @@ import { authenticateToken } from "../middlewares/auth.middleware";
 
 const router = express.Router();
 
-router.use(authenticateToken);
+//router.use(authenticateToken);
 
 // Routes protégées
-router.get("/ingredients", authenticateToken, getIngredients);// 
-router.post("/experiment", authenticateToken, experimentRecipe); // 
-router.get("/my-recipes",  authenticateToken, getMyRecipes); // 
-router.get("/recipes/all", authenticateToken, getAllRecipes); // 
+router.get("/ingredients", getIngredients);// authenticateToken,
+router.post("/experiment", experimentRecipe); // authenticateToken,
+router.get("/my-recipes",  getMyRecipes); // authenticateToken,
+router.get("/recipes/all", getAllRecipes); // authenticateToken, 
 
 export default router;
