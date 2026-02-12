@@ -12,8 +12,7 @@ import dashboardRoutes from "./routes/dashboard.routes";
 import { generateRandomOrder, stopAllTimers } from "./sockets/orderSocket";
 import path from "path"; // Ajoute cet import
 
-// Remplace ta ligne dotenv par celle-ci :
-dotenv.config({ path: path.resolve(process.cwd(), "./server/.env") });
+dotenv.config({ path: "./server/.env" });
 
 const app: Application = express();
 const httpServer = createServer(app);
