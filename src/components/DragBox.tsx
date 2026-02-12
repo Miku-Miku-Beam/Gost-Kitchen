@@ -13,20 +13,34 @@ const DragBox: React.FC<DragBoxProps> = ({ name, initialX }) => {
   useEffect(() => {
     const handleGlobalMouseMove = (e: MouseEvent) => {
       if (!isDragging) return;
-      setPosition({ x: e.clientX - offset.current.x, y: e.clientY - offset.current.y });
+      setPosition({
+        x: e.clientX - offset.current.x,
+        y: e.clientY - offset.current.y
+      });
     };
 
     const handleGlobalMouseUp = (e: MouseEvent) => {
       if (!isDragging) return;
       setIsDragging(false);
-      // Logique de collision conservée...
-      console.log(`${name} déposé à :`, { x: e.clientX, y: e.clientY });
+      
+      // Logique de zone (DropZone)
+      const zoneWidth = 800;
+      const zoneHeight = 380;
+      const minX = window.innerWidth - (zoneWidth + 50);
+      const maxX = window.innerWidth - 50;
+      const minY = 600;
+      const maxY = 600 + zoneHeight;
+
+      if (e.clientX > minX && e.clientX < maxX && e.clientY > minY && e.clientY < maxY) {
+        console.log(`${name} utilisé dans la zone !`);
+      }
     };
 
     if (isDragging) {
       window.addEventListener('mousemove', handleGlobalMouseMove);
       window.addEventListener('mouseup', handleGlobalMouseUp);
     }
+
     return () => {
       window.removeEventListener('mousemove', handleGlobalMouseMove);
       window.removeEventListener('mouseup', handleGlobalMouseUp);
@@ -35,7 +49,10 @@ const DragBox: React.FC<DragBoxProps> = ({ name, initialX }) => {
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
-    offset.current = { x: e.clientX - position.x, y: e.clientY - position.y };
+    offset.current = {
+      x: e.clientX - position.x,
+      y: e.clientY - position.y
+    };
   };
 
   const floatStyle: React.CSSProperties = {
@@ -61,7 +78,7 @@ const DragBox: React.FC<DragBoxProps> = ({ name, initialX }) => {
     <div style={floatStyle} onMouseDown={handleMouseDown}>
       <div style={{ textAlign: 'center', color: '#D9D9D9', fontWeight: 'bold' }}>
         <div style={{ fontSize: '1.2rem' }}>{name}</div>
-        <span style={{ fontSize: '0.8rem', fontWeight: 'normal' }}>Ingrédient</span>
+        <span style={{ fontSize: '0.7rem', fontWeight: 'normal' }}>Ingrédient</span>
       </div>
     </div>
   );

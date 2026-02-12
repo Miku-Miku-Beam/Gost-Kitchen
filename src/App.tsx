@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LoginForm from './LoginForm'; // On l'importe d'un autre fichier
-import Game from './Game';
-import MarketPlace from './Market';
+import LoginForm from './Pages/LoginForm'; // On l'importe d'un autre fichier
+import Game from './Pages/Game';
+import MarketPlace from './Pages/Market';
 
 function App() {
   return (

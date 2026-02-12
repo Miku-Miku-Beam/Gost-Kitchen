@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import monlogo from "./assets/logo poèle.svg";
+import monlogo from "../assets/logo poèle.svg";
 import { useNavigate } from "react-router-dom";
-import { authAPI } from "./services/api.ts";
+import { authAPI } from "../services/api.ts";
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState("");
