@@ -23,6 +23,7 @@ const MarketPlace: React.FC = () => {
                 const response = await fetch('http://localhost:5000/api/laboratory/ingredients');
                 
                 if (!response.ok) {
+                    console.log("erreur réseaulors de la récupéation")
                     throw new Error('Erreur réseau lors de la récupération');
                 }
 
@@ -44,21 +45,18 @@ const MarketPlace: React.FC = () => {
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
     return (
-        <div>
-            <h1>MarketPlace - Ingrédients</h1>
-            
-            {/* Affichage sous forme de liste ou de grille */}
-            <div style={{ display: 'grid', gap: '10px' }}>
-                {ingredients.map((item) => (
-                    <div key={item._id} style={{ border: '1px solid #ccc', padding: '10px' }}>
-                        <h3>{item.nom}</h3>
-                        {item.prix && <p>Prix : {item.prix} €</p>}
-                    </div>
-                ))}
+        <div style={{ display: 'grid', gap: '10px' }}>
+    {Array.isArray(ingredients) ? (
+        ingredients.map((item) => (
+            <div key={item._id} style={{ border: '1px solid #ccc', padding: '10px' }}>
+                <h3>{item.nom}</h3>
+                {item.prix && <p>Prix : {item.prix} €</p>}
             </div>
-            
-            {ingredients.length === 0 && <p>Aucun ingrédient trouvé.</p>}
-        </div>
+        ))
+    ) : (
+        <p>Erreur : Le format des données reçues est incorrect (pas un tableau).</p>
+    )}
+    </div>
     );
 };
 
