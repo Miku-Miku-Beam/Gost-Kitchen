@@ -44,7 +44,7 @@ const DragBox: React.FC = () => {
       if (e.clientX > minX && e.clientX < maxX && e.clientY > minY && e.clientY < maxY) {
         
         // REMPLACÉ : Plus d'alerte, juste un log dans la console de l'inspecteur
-        console.log("🎯 Objet déposé dans la zone ! Position finale :", { x: e.clientX, y: e.clientY });
+        console.log("Objet déposé dans la zone ! Position finale :", { x: e.clientX, y: e.clientY });
       }
     };
 
