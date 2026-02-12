@@ -90,8 +90,8 @@ const Game: React.FC = () => {
         <img src={retour} alt="Retour" style={logoStyle}/>
       </button>
       <div style={bannerStyle}>
-        <button style={buttonStyle2}>
-            <img src={Marcket} alt="Market" style={marcketStyle} />
+        <button style={buttonStyle2} onDoubleClick={() => navigate('/MarcketPlace')}>
+            <img src={Marcket} alt="Marcket" style={marcketStyle} />
         </button>
         <div style = {depthBannerStyle}>
         </div>
