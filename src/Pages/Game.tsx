@@ -52,7 +52,7 @@ const Game: React.FC = () => {
     right: '140px',
     padding: '10px 20px', 
     backgroundColor: '#000', 
-    color: '#A88752',
+    color: '#267d2a',
     border: '2px solid #A88752', 
     borderRadius: '10px', 
     cursor: 'pointer',

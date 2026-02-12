@@ -19,7 +19,7 @@ const DropZone: React.FC = () => {
   return (
     <div style={zoneStyle} id="drop-zone">
       <span style={{ color: '#A88752', fontWeight: 'bold', textAlign: 'center' }}>
-        Composer plat
+        Composer ingrédients
       </span>
     </div>
   );
