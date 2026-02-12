@@ -8,8 +8,10 @@ import authRoutes from "./routes/auth.routes";
 import laboratoryRoutes from "./routes/laboratory.routes";
 import ordersRoutes from "./routes/order.routes";
 import { generateRandomOrder, stopAllTimers } from "./sockets/orderSocket";
+import path from "path"; // Ajoute cet import
 
-dotenv.config({ path: "./server/.env" });
+// Remplace ta ligne dotenv par celle-ci :
+dotenv.config({ path: path.resolve(process.cwd(), "./server/src/.env") });
 
 const app: Application = express();
 const httpServer = createServer(app);
