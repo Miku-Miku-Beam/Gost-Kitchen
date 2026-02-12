@@ -108,7 +108,7 @@ const expireOrder = async (
     // Générer une nouvelle commande après 5 secondes
     setTimeout(() => {
       generateRandomOrder(userId, socketId);
-    }, 5000);
+    }, 500);
   } catch (error) {
     console.error("Erreur expireOrder:", error);
   }

@@ -6,6 +6,7 @@ import { Server } from "socket.io";
 import { connectDB } from "./config/database";
 import authRoutes from "./routes/auth.routes";
 import laboratoryRoutes from "./routes/laboratory.routes";
+import ordersRoutes from "./routes/order.routes";
 import { generateRandomOrder, stopAllTimers } from "./sockets/orderSocket";
 
 dotenv.config({ path: "./server/.env" });
@@ -35,6 +36,7 @@ app.set("io", io); // Rendre io accessible dans les routes via req.app.get('io')
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/laboratory", laboratoryRoutes);
+app.use("/api/orders", ordersRoutes);
 
 // Route de test
 app.get("/api/health", (req, res) => {
@@ -42,12 +44,12 @@ app.get("/api/health", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  console.log(`🔌 Client connecté: ${socket.id}`);
+  console.log(`Client connecté: ${socket.id}`);
 
   // Lorsqu'un utilisateur se connecte avec son userId
   socket.on("join-game", async (data: { userId: string }) => {
     const { userId } = data;
-    console.log(`🎮 Joueur ${userId} a rejoint la partie`);
+    console.log(`Joueur ${userId} a rejoint la partie`);
 
     // Associer le socket à l'utilisateur
     socket.data.userId = userId;
@@ -61,7 +63,7 @@ io.on("connection", (socket) => {
     const userId = socket.data.userId;
     if (userId) {
       stopAllTimers(userId);
-      console.log(`🚪 Joueur ${userId} a quitté la partie`);
+      console.log(`Joueur ${userId} a quitté la partie`);
     }
   });
 
@@ -70,7 +72,7 @@ io.on("connection", (socket) => {
     if (userId) {
       stopAllTimers(userId);
     }
-    console.log(`🔌 Client déconnecté: ${socket.id}`);
+    console.log(`Client déconnecté: ${socket.id}`);
   });
 });
 

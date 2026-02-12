@@ -7,7 +7,7 @@ export interface IOrder extends Document {
   status: "pending" | "served" | "expired";
   createdAt: Date;
   expiresAt: Date;
-  sertedAt?: Date;
+  servedAt?: Date;
 }
 
 const orderSchema = new Schema<IOrder>({
@@ -38,7 +38,7 @@ const orderSchema = new Schema<IOrder>({
     type: Date,
     required: true,
   },
-  sertedAt: {
+  servedAt: {
     type: Date,
   },
 });
