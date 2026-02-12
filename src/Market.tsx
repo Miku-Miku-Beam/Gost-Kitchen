@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface Ingredient {
     _id: string;
@@ -7,25 +8,31 @@ interface Ingredient {
 }
 
 const MarketPlace: React.FC = () => {
-    // --- ÉTATS ---
     const [ingredients, setIngredients] = useState<Ingredient[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
+
+    // --- LOGIQUE D'AJOUT ---
+    const addToCart = (ingredient: Ingredient) => {
+        const saved = localStorage.getItem('inventory');
+        const inventory = saved ? JSON.parse(saved) : [];
+        inventory.push(ingredient);
+        localStorage.setItem('inventory', JSON.stringify(inventory));
+        navigate('/game'); // Redirige vers le jeu après le clic
+    };
 
     // --- STYLES ---
-
     const containerStyle: React.CSSProperties = {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'flex-start',
         minHeight: '100vh',
         width: '100vw',
-        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-        margin: 0,
+        fontFamily: "'Segoe UI', sans-serif",
         padding: '40px',
         boxSizing: 'border-box',
-        backgroundColor: '#242424',
+        backgroundColor: '#f0f2f5',
     };
 
     const gridStyle: React.CSSProperties = {
@@ -40,79 +47,46 @@ const MarketPlace: React.FC = () => {
         width: '100%',
         height: '200px',
         borderRadius: '40px',
-        backgroundColor: '#ffffff00',
+        backgroundColor: '#D9D9D9',
         boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: '20px',
-        boxSizing: 'border-box'
+        cursor: 'pointer'
     };
 
-    const nameStyle: React.CSSProperties = {
-        fontSize: '1.5rem',
-        color: '#806952',
-        fontWeight: 'bold',
-        margin: '20px 0'
-    };
-
-    const categoryStyle: React.CSSProperties = {
-        fontSize: '0.9rem',
-        color: '#168f3a',
-        textTransform: 'uppercase',
-        letterSpacing: '1px'
-    };
-
-    // --- LOGIQUE ---
+    const nameStyle: React.CSSProperties = { fontSize: '1.5rem', fontWeight: 'bold' };
 
     useEffect(() => {
         const fetchIngredients = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/laboratory/ingredients');
-                
-                if (!response.ok) {
-                    throw new Error('Erreur lors de la récupération');
-                }
-
+                const response = await fetch('http://127.0.0.1:5000/api/laboratory/ingredients');
                 const data = await response.json();
-                
-                // On vérifie si data est le tableau ou contient le tableau
-                if (Array.isArray(data)) {
-                    setIngredients(data);
-                } else if (data.ingredients && Array.isArray(data.ingredients)) {
-                    setIngredients(data.ingredients);
-                }
+                setIngredients(Array.isArray(data) ? data : data.ingredients || []);
             } catch (err) {
-                console.error(err);
-                setError("Impossible de charger les ingrédients");
+                setError("Erreur de connexion au serveur");
             } finally {
                 setLoading(false);
             }
         };
-
         fetchIngredients();
     }, []);
 
-    // --- RENDU ---
-
     if (loading) return <div style={containerStyle}>Chargement...</div>;
-    if (error) return <div style={containerStyle}><p style={{color: 'red'}}>{error}</p></div>;
 
     return (
         <div style={containerStyle}>
-            <h1 style={{ marginBottom: '50px', fontSize: '2.5rem', color:'#806952' }}>MarketPlace</h1>
-            
+            <h1 style={{ marginBottom: '50px' }}>MarketPlace</h1>
             <div style={gridStyle}>
                 {ingredients.map((item) => (
-                    <div key={item._id} style={cardStyle}>
-                        <span style={categoryStyle}>{item.category}</span>
+                    <div key={item._id} style={cardStyle} onClick={() => addToCart(item)}>
+                        <span style={{ color: '#666' }}>{item.category}</span>
                         <h3 style={nameStyle}>{item.name}</h3>
+                        <p style={{ fontSize: '0.8rem' }}>Cliquer pour ajouter</p>
                     </div>
                 ))}
             </div>
-
-            {ingredients.length === 0 && <p>Aucun ingrédient en stock.</p>}
         </div>
     );
 };

@@ -3,7 +3,7 @@ import { connectDB } from "../config/database";
 import Ingredient from "../models/Ingredient";
 import Recipe from "../models/Recipe";
 
-dotenv.config({ path: "./server/src/.env" });
+dotenv.config({ path: "./server/.env" });
 
 const ingredients = [
   // Légumes

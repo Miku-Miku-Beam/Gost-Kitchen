@@ -11,7 +11,7 @@ import { generateRandomOrder, stopAllTimers } from "./sockets/orderSocket";
 import path from "path"; // Ajoute cet import
 
 // Remplace ta ligne dotenv par celle-ci :
-dotenv.config({ path: path.resolve(process.cwd(), "./server/src/.env") });
+dotenv.config({ path: path.resolve(process.cwd(), "./server/.env") });
 
 const app: Application = express();
 const httpServer = createServer(app);
