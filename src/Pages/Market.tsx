@@ -32,7 +32,7 @@ const MarketPlace: React.FC = () => {
     fontFamily: "'Segoe UI', sans-serif",
     padding: '40px',
     boxSizing: 'border-box',
-    backgroundColor: '#f0f2f5',
+    backgroundColor: '#242424',
   };
 
   const gridStyle: React.CSSProperties = {
@@ -47,8 +47,9 @@ const MarketPlace: React.FC = () => {
     width: '100%',
     height: '200px',
     borderRadius: '40px',
-    backgroundColor: '#D9D9D9',
+    backgroundColor: '#242424',
     boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+    border: '2px solid #A88752',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -60,7 +61,8 @@ const MarketPlace: React.FC = () => {
   const nameStyle: React.CSSProperties = { 
     fontSize: '1.5rem', 
     fontWeight: 'bold', 
-    margin: '10px 0' 
+    margin: '10px 0', 
+    color: '#267d2a'
   };
 
   useEffect(() => {
@@ -84,7 +86,7 @@ const MarketPlace: React.FC = () => {
 
   return (
     <div style={containerStyle}>
-      <h1 style={{ marginBottom: '50px' }}>MarketPlace</h1>
+      <h1 style={{ marginBottom: '50px',  color: '#A88752'}}>MarketPlace</h1>
       <div style={gridStyle}>
         {ingredients.map((item) => (
           <div 
@@ -94,7 +96,7 @@ const MarketPlace: React.FC = () => {
             onMouseOver={(e) => (e.currentTarget.style.transform = 'scale(1.02)')}
             onMouseOut={(e) => (e.currentTarget.style.transform = 'scale(1)')}
           >
-            <span style={{ color: '#666', textTransform: 'uppercase', fontSize: '0.8rem' }}>
+            <span style={{ color: '#267d2a', textTransform: 'uppercase', fontSize: '0.8rem' }}>
                 {item.category}
             </span>
             <h3 style={nameStyle}>{item.name}</h3>

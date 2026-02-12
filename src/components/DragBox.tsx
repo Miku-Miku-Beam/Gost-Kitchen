@@ -76,7 +76,7 @@ const DragBox: React.FC<DragBoxProps> = ({ name, initialX }) => {
 
   return (
     <div style={floatStyle} onMouseDown={handleMouseDown}>
-      <div style={{ textAlign: 'center', color: '#D9D9D9', fontWeight: 'bold' }}>
+      <div style={{ textAlign: 'center', color: '#267d2a', fontWeight: 'bold' }}>
         <div style={{ fontSize: '1.2rem' }}>{name}</div>
         <span style={{ fontSize: '0.7rem', fontWeight: 'normal' }}>Ingrédient</span>
       </div>

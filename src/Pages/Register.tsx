@@ -3,33 +3,40 @@ import monlogo from "../assets/logo poèle.svg";
 import { useNavigate } from "react-router-dom";
 import { authAPI } from "../services/api.ts";
 
-const LoginForm: React.FC = () => {
+const RegisterForm: React.FC = () => {
+  const [restaurantName, setRestaurantName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
-    if (!email || !password) {
+  const handleRegister = async () => {
+    // Validation simple
+    if (!email || !password || !restaurantName) {
       setError("Veuillez remplir tous les champs");
       return;
     }
+    if (password !== confirmPassword) {
+      setError("Les mots de passe ne correspondent pas");
+      return;
+    }
+
     setLoading(true);
     setError("");
+
     try {
-      const response = await authAPI.login({ email, password });
-      localStorage.setItem("token", response.token);
-      localStorage.setItem("userId", response.user.id);
-      localStorage.setItem("restaurantName", response.user.restaurantName);
-      navigate("/game");
+      await authAPI.register({ email, password, restaurantName });
+      // On redirige vers le login après inscription réussie
+      navigate("/login"); 
     } catch (err: unknown) {
-      console.error("Erreur lors de la connexion:", err);
+      console.error("Erreur lors de l'inscription:", err);
       if (err instanceof Error && "response" in err) {
         const axiosError = err as {
           response?: { data?: { message?: string } };
         };
-        setError(axiosError.response?.data?.message || "Erreur de connexion");
+        setError(axiosError.response?.data?.message || "Erreur lors de l'inscription");
       } else {
         setError("Erreur de connexion au serveur");
       }
@@ -38,7 +45,7 @@ const LoginForm: React.FC = () => {
     }
   };
 
-  // Style de page
+  // --- STYLES (Copiés de LoginForm) ---
 
   const containerStyle: React.CSSProperties = {
     display: "flex",
@@ -48,12 +55,14 @@ const LoginForm: React.FC = () => {
     width: "100vw",
     fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
     margin: 0,
-    padding: 0,
+    padding: "20px", // Un peu de padding pour le responsive
+    boxSizing: "border-box",
   };
 
   const cardStyle: React.CSSProperties = {
     width: "598px",
-    height: "691px",
+    height: "auto", // Hauteur auto pour accueillir plus de champs
+    minHeight: "691px",
     borderRadius: "74px",
     backgroundColor: "#D9D9D9",
     boxShadow: "0 50px 50px rgba(0,0,0,0.1)",
@@ -61,35 +70,31 @@ const LoginForm: React.FC = () => {
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    padding: "40px",
+    padding: "60px 40px",
     boxSizing: "border-box",
   };
 
   const logoStyle: React.CSSProperties = {
-    fontSize: "2rem",
-    color: "#000000",
-    marginBottom: "40px",
-    fontWeight: "bold",
+    width: "120px",
+    marginBottom: "30px",
   };
 
   const inputContainerStyle: React.CSSProperties = {
     width: "80%",
-    marginBottom: "20px",
-    alignItems: "center",
-    justifyContent: "center",
+    marginBottom: "15px",
   };
 
   const labelStyle: React.CSSProperties = {
     display: "block",
-    fontSize: "1rem",
+    fontSize: "0.9rem",
     color: "#666",
-    marginBottom: "8px",
+    marginBottom: "6px",
     paddingLeft: "10px",
   };
 
   const inputStyle: React.CSSProperties = {
     width: "100%",
-    padding: "18px 20px",
+    padding: "15px 20px",
     fontSize: "1rem",
     color: "#000000",
     backgroundColor: "#f0f2f5",
@@ -103,7 +108,7 @@ const LoginForm: React.FC = () => {
   const buttonStyle: React.CSSProperties = {
     width: "80%",
     padding: "20px",
-    marginTop: "30px",
+    marginTop: "20px",
     backgroundColor: "#000000",
     color: "#FFFFFF",
     fontSize: "1.2rem",
@@ -114,39 +119,48 @@ const LoginForm: React.FC = () => {
     boxShadow: "0 10px 20px rgba(0,0,0,0.2)",
   };
 
-  const errorStyle: React.CSSProperties = {
-    color: "#d32f2f",
-    fontSize: "0.9rem",
-    marginTop: "10px",
-    textAlign: "center",
-  };
-  
   const linkStyle: React.CSSProperties = {
     marginTop: "20px",
     color: "#666",
     fontSize: "0.9rem",
     cursor: "pointer",
     textDecoration: "underline",
-    transition: "color 0.2s ease",
+  };
+
+  const errorStyle: React.CSSProperties = {
+    color: "#d32f2f",
+    fontSize: "0.9rem",
+    marginTop: "10px",
+    textAlign: "center",
   };
 
   return (
     <div style={containerStyle}>
       <div style={cardStyle}>
-        {/* Logo */}
-        <h1 style={logoStyle}>
-          <img src={monlogo} alt="Logo" style={logoStyle} />
-        </h1>
+        <img src={monlogo} alt="Logo" style={logoStyle} />
+
+        {/* Champ Nom du Restaurant */}
+        <div style={inputContainerStyle}>
+          <label style={labelStyle}>Nom du Restaurant</label>
+          <input
+            type="text"
+            value={restaurantName}
+            onChange={(e) => setRestaurantName(e.target.value)}
+            style={inputStyle}
+            placeholder="La Poèle d'Or"
+            disabled={loading}
+          />
+        </div>
 
         {/* Champ Email */}
         <div style={inputContainerStyle}>
-          <label style={labelStyle}>Identifiant</label>
+          <label style={labelStyle}>Email</label>
           <input
-            type="text"
+            type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             style={inputStyle}
-            placeholder="Entrez votre email"
+            placeholder="chef@cuisine.com"
             disabled={loading}
           />
         </div>
@@ -164,31 +178,37 @@ const LoginForm: React.FC = () => {
           />
         </div>
 
+        {/* Confirmation Mot de passe */}
+        <div style={inputContainerStyle}>
+          <label style={labelStyle}>Confirmer le mot de passe</label>
+          <input
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            style={inputStyle}
+            placeholder="••••••••"
+            disabled={loading}
+          />
+        </div>
+
         {error && <div style={errorStyle}>{error}</div>}
 
-        {/* Bouton Connexion */}
         <button
-          onClick={handleLogin}
+          onClick={handleRegister}
           style={buttonStyle}
           disabled={loading}
           onMouseOver={(e) => (e.currentTarget.style.transform = "scale(1.02)")}
           onMouseOut={(e) => (e.currentTarget.style.transform = "scale(1)")}
         >
-          {loading ? "Connexion..." : "Se connecter"}
+          {loading ? "Création..." : "Créer mon compte"}
         </button>
 
-        {/* --- NOUVEAU LIEN VERS REGISTER --- */}
-        <p 
-          style={linkStyle} 
-          onClick={() => navigate("/Register")}
-          onMouseOver={(e) => (e.currentTarget.style.color = "#000")}
-          onMouseOut={(e) => (e.currentTarget.style.color = "#666")}
-        >
-          Pas encore de compte ? Créer un restaurant
+        <p style={linkStyle} onClick={() => navigate("/LoginForm")}>
+          Déjà un compte ? Se connecter
         </p>
       </div>
     </div>
   );
 };
 
-export default LoginForm;
+export default RegisterForm;
