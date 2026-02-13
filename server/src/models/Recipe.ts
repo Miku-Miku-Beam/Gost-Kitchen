@@ -9,6 +9,7 @@ export interface IRecipe extends Document {
   name: string;
   ingredients: IRecipeIngredient[];
   discoveredBy: mongoose.Types.ObjectId[];
+  salePrice: number;
 }
 
 const recipeSchema = new Schema<IRecipe>({
@@ -38,6 +39,7 @@ const recipeSchema = new Schema<IRecipe>({
       ref: "User",
     },
   ],
+  salePrice: { type: Number, required: true, min: 0 },
 });
 
 export default mongoose.model<IRecipe>("Recipe", recipeSchema);
