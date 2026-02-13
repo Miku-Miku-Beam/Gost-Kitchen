@@ -7,29 +7,29 @@ dotenv.config({ path: "./server/.env" });
 
 const ingredients = [
   // Légumes
-  { name: "Tomate", category: "légume" },
-  { name: "Oignon", category: "légume" },
-  { name: "Ail", category: "légume" },
-  { name: "Carotte", category: "légume" },
+  { name: "Tomate", category: "légume", price: 8 },
+  { name: "Oignon", category: "légume", price: 5 },
+  { name: "Ail", category: "légume", price: 6 },
+  { name: "Carotte", category: "légume", price: 7 },
 
   // Viandes & Poissons
-  { name: "Poulet", category: "viande" },
-  { name: "Bœuf", category: "viande" },
-  { name: "Saumon", category: "poisson" },
+  { name: "Poulet", category: "viande", price: 25 },
+  { name: "Bœuf", category: "viande", price: 40 },
+  { name: "Saumon", category: "poisson", price: 35 },
 
   // Produits laitiers
-  { name: "Crème", category: "produit laitier" },
-  { name: "Fromage", category: "produit laitier" },
-  { name: "Beurre", category: "produit laitier" },
+  { name: "Crème", category: "produit laitier", price: 12 },
+  { name: "Fromage", category: "produit laitier", price: 15 },
+  { name: "Beurre", category: "produit laitier", price: 10 },
 
   // Féculents
-  { name: "Pâtes", category: "féculent" },
-  { name: "Riz", category: "féculent" },
-  { name: "Pomme de terre", category: "féculent" },
+  { name: "Pâtes", category: "féculent", price: 8 },
+  { name: "Riz", category: "féculent", price: 9 },
+  { name: "Pomme de terre", category: "féculent", price: 6 },
 
   // Autres
-  { name: "Œuf", category: "autre" },
-  { name: "Huile", category: "autre" },
+  { name: "Œuf", category: "autre", price: 5 },
+  { name: "Huile", category: "autre", price: 12 },
 ];
 
 const seedData = async () => {
@@ -61,6 +61,7 @@ const seedData = async () => {
           { ingredientId: find("Œuf"), quantity: 2 },
         ],
         discoveredBy: [],
+        salePrice: 85,
       },
       {
         name: "Poulet Rôti",
@@ -71,6 +72,7 @@ const seedData = async () => {
           { ingredientId: find("Pomme de terre"), quantity: 3 },
         ],
         discoveredBy: [],
+        salePrice: 95,
       },
       {
         name: "Saumon Grillé",
@@ -80,6 +82,7 @@ const seedData = async () => {
           { ingredientId: find("Riz"), quantity: 1 },
         ],
         discoveredBy: [],
+        salePrice: 110,
       },
       {
         name: "Bœuf Bourguignon",
@@ -89,6 +92,7 @@ const seedData = async () => {
           { ingredientId: find("Oignon"), quantity: 1 },
         ],
         discoveredBy: [],
+        salePrice: 120,
       },
       {
         name: "Omelette",
@@ -98,6 +102,7 @@ const seedData = async () => {
           { ingredientId: find("Fromage"), quantity: 1 },
         ],
         discoveredBy: [],
+        salePrice: 50,
       },
       {
         name: "Riz au Poulet",
@@ -108,6 +113,7 @@ const seedData = async () => {
           { ingredientId: find("Ail"), quantity: 1 },
         ],
         discoveredBy: [],
+        salePrice: 80,
       },
       {
         name: "Gratin Dauphinois",
@@ -118,6 +124,7 @@ const seedData = async () => {
           { ingredientId: find("Ail"), quantity: 1 },
         ],
         discoveredBy: [],
+        salePrice: 70,
       },
     ];
 

@@ -1,9 +1,25 @@
 import { Response } from "express";
 import { AuthRequest } from "../middlewares/auth.middleware";
 import Order from "../models/Order";
+import Recipe from "../models/Recipe";
 import { UserProgress } from "../models/UserProgress";
 import { io } from "../server";
 import { generateRandomOrder } from "../sockets/orderSocket";
+import mongoose from "mongoose";
+import Transaction from "../models/Transaction";
+
+interface PopulatedIngredient {
+  _id: mongoose.Types.ObjectId;
+  name: string;
+  category: string;
+  price: number;
+}
+
+const isPopulatedIngredient = (
+  ingredient: mongoose.Types.ObjectId | PopulatedIngredient,
+): ingredient is PopulatedIngredient => {
+  return typeof ingredient === "object" && "_id" in ingredient;
+};
 
 // POST api/order/serve
 export const serveOrder = async (
@@ -49,7 +65,7 @@ export const serveOrder = async (
 
     // Vérifier si le joueur connaît la recette
     const knownRecipe = userProgress.discoveredRecipes.some(
-      (recipe) => recipe._id.toString() === order.recipeId.toString(),
+      (recipeId) => recipeId._id.toString() === order.recipeId.toString(),
     );
 
     if (!knownRecipe) {
@@ -61,17 +77,85 @@ export const serveOrder = async (
       return;
     }
 
+    // Récupérer la recette complète
+    const recipe = await Recipe.findById(order.recipeId).populate(
+      "ingredients.ingredientId",
+    );
+    if (!recipe) {
+      res.status(404).json({ success: false, message: "Recette introuvable" });
+      return;
+    }
+
+    // Vérifier si le joueur a les ingrédients en stock
+    const missingIngredients = [];
+
+    for (const recipeIng of recipe.ingredients) {
+      const ingredientDoc = isPopulatedIngredient(recipeIng.ingredientId)
+        ? recipeIng.ingredientId
+        : null;
+
+      if (!ingredientDoc) continue;
+
+      const stockItem = userProgress.stock.find(
+        (s) => s.ingredientId.toString() === ingredientDoc._id.toString(),
+      );
+
+      if (!stockItem || stockItem.quantity < recipeIng.quantity) {
+        missingIngredients.push({
+          name: ingredientDoc.name,
+          needed: recipeIng.quantity,
+          inStock: stockItem?.quantity || 0,
+        });
+      }
+    }
+
+    if (missingIngredients.length > 0) {
+      res.status(400).json({
+        success: false,
+        message: `Stock insuffisant !`,
+        missingIngredients,
+      });
+      return;
+    }
+
+    // Déduire les ingrédients du stock
+    for (const recipeIng of recipe.ingredients) {
+      const ingredientDoc = isPopulatedIngredient(recipeIng.ingredientId)
+        ? recipeIng.ingredientId
+        : null;
+
+      if (!ingredientDoc) continue;
+
+      const stockItem = userProgress.stock.find(
+        (s) => s.ingredientId.toString() === ingredientDoc._id.toString(),
+      );
+
+      if (stockItem) {
+        stockItem.quantity -= recipeIng.quantity;
+      }
+    }
+
     // Marquer la commande comme servie
     order.status = "served";
     order.servedAt = new Date();
     await order.save();
 
-    //Augmenter la satisfaction de 1 points
+    // Augmenter satisfaction et argent
     userProgress.satisfaction += 1;
+    userProgress.money += recipe.salePrice;
     await userProgress.save();
 
+    // Créer transaction de vente
+    await Transaction.create({
+      userId,
+      type: "sale",
+      amount: recipe.salePrice,
+      description: `Vente de ${order.recipeName}`,
+      relatedOrderId: order._id,
+    });
+
     console.log(
-      `Commande servie: ${order.recipeName} - Satisfaction: ${userProgress.satisfaction}`,
+      `Commande servie: ${order.recipeName} +${recipe.salePrice}€ - Nouveau solde: ${userProgress.money}€`,
     );
 
     // Notifier le client via WebSocket
@@ -92,7 +176,9 @@ export const serveOrder = async (
       success: true,
       message: `Commande servie : ${order.recipeName} !`,
       satisfaction: userProgress.satisfaction,
-      points: 1,
+      earned: recipe.salePrice,
+      money: userProgress.money,
+      stock: userProgress.stock,
     });
   } catch (error) {
     console.error("Erreur serveOrder:", error);

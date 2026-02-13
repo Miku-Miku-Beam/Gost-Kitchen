@@ -1,6 +1,7 @@
 import { io } from "../server";
 import Recipe from "../models/Recipe";
 import Order from "../models/Order";
+import Transaction from "../models/Transaction";
 import { UserProgress } from "../models/UserProgress";
 
 // Map pour stocker les timers actifs par userId
@@ -57,7 +58,6 @@ export const generateRandomOrder = async (userId: string, socketId: string) => {
   }
 };
 
-// Fonction pour expirer une commande
 const expireOrder = async (
   orderId: string,
   userId: string,
@@ -70,45 +70,59 @@ const expireOrder = async (
       return;
     }
 
-    // Marquer la commande comme expirée
     order.status = "expired";
     await order.save();
 
-    // Diminuer la satisfaction de 10 points
     const userProgress = await UserProgress.findOne({ userId });
     if (userProgress) {
+      // Pénalité : -10 satisfaction ET -50€
+      const penalty = 50;
+
       userProgress.satisfaction = Math.max(0, userProgress.satisfaction - 10);
+      userProgress.money = Math.max(0, userProgress.money - penalty);
       await userProgress.save();
 
+      // Créer transaction de pénalité
+      await Transaction.create({
+        userId,
+        type: "penalty",
+        amount: -penalty,
+        description: `Pénalité pour commande expirée: ${order.recipeName}`,
+        relatedOrderId: order._id,
+      });
+
       console.log(
-        `Commande expirée: ${order.recipeName} - Satisfaction: ${userProgress.satisfaction}`,
+        `Commande expirée: ${order.recipeName} -10 satisfaction, -${penalty}€ - Solde: ${userProgress.money}€`,
       );
 
-      // Notifier le client
       io.to(socketId).emit("order-expired", {
         orderId: order._id,
         recipeName: order.recipeName,
         satisfaction: userProgress.satisfaction,
+        money: userProgress.money,
+        penalty,
       });
 
-      // Vérifier le Game Over
-      if (userProgress.satisfaction <= 0) {
+      // Game Over si satisfaction ou argent à 0
+      if (userProgress.satisfaction <= 0 || userProgress.money <= 0) {
+        const reason =
+          userProgress.satisfaction <= 0
+            ? "satisfaction client insuffisante"
+            : "faillite financière";
+
         io.to(socketId).emit("game-over", {
-          message:
-            "Game Over ! Votre restaurant a fermé pour satisfaction client insuffisante.",
+          message: `Game Over ! Votre restaurant a fermé pour ${reason}.`,
         });
-        console.log(`Game Over pour ${userId}`);
+        console.log(`Game Over pour ${userId}: ${reason}`);
         return;
       }
     }
 
-    // Nettoyer le timer
     activeTimers.delete(orderId);
 
-    // Générer une nouvelle commande après 5 secondes
     setTimeout(() => {
       generateRandomOrder(userId, socketId);
-    }, 500);
+    }, 5000);
   } catch (error) {
     console.error("Erreur expireOrder:", error);
   }

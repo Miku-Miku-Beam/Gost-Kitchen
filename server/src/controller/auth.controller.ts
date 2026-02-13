@@ -56,6 +56,8 @@ export const register = async (
       userId: user._id,
       discoveredRecipes: [],
       satisfaction: 20,
+      money: 100,
+      stock: [],
     });
 
     // Générer le token JWT
