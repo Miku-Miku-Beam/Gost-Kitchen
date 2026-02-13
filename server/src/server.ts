@@ -7,6 +7,8 @@ import { connectDB } from "./config/database";
 import authRoutes from "./routes/auth.routes";
 import laboratoryRoutes from "./routes/laboratory.routes";
 import ordersRoutes from "./routes/order.routes";
+import marketRoutes from "./routes/marketplace.routes";
+import dashboardRoutes from "./routes/dashboard.routes";
 import { generateRandomOrder, stopAllTimers } from "./sockets/orderSocket";
 import path from "path"; // Ajoute cet import
 
@@ -39,6 +41,8 @@ app.set("io", io); // Rendre io accessible dans les routes via req.app.get('io')
 app.use("/api/auth", authRoutes);
 app.use("/api/laboratory", laboratoryRoutes);
 app.use("/api/orders", ordersRoutes);
+app.use("/api/marketplace", marketRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 // Route de test
 app.get("/api/health", (req, res) => {

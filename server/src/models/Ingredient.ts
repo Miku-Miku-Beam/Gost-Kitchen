@@ -3,6 +3,7 @@ import mongoose, { Document, Schema } from "mongoose";
 export interface IIngredient extends Document {
   name: string;
   category: string;
+  price: number;
 }
 
 const ingredientSchema = new Schema<IIngredient>({
@@ -24,6 +25,11 @@ const ingredientSchema = new Schema<IIngredient>({
       "féculent",
       "autre",
     ],
+  },
+  price: {
+    type: Number,
+    required: true,
+    min: 0,
   },
 });
 
