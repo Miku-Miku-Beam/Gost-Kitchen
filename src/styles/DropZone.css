@@ -1,0 +1,43 @@
+/* On regroupe tout dans un seul bloc .drop-zone */
+.drop-zone {
+  position: absolute;
+  top: 180px;
+  right: 50px;
+  width: 800px;
+  height: 380px;
+  border: 3px dashed #A88752;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(168, 135, 82, 0.1);
+  z-index: 5;
+  transition: background-color 0.3s ease;
+  
+  /* L'animation est déclarée ici */
+  animation: pulse-border 3s infinite ease-in-out;
+}
+
+.drop-zone-text {
+  color: #A88752;
+  font-weight: bold;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  pointer-events: none;
+}
+
+@keyframes pulse-border {
+  0% { 
+    border-color: rgba(168, 135, 82, 0.4); 
+    background-color: rgba(168, 135, 82, 0.05);
+  }
+  50% { 
+    border-color: rgba(168, 135, 82, 1); 
+    background-color: rgba(168, 135, 82, 0.15);
+  }
+  100% { 
+    border-color: rgba(168, 135, 82, 0.4); 
+    background-color: rgba(168, 135, 82, 0.05);
+  }
+}

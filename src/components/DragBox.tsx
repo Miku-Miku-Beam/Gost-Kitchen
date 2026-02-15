@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
+import '../styles/DragBox.css';
 
 interface DragBoxProps {
+  id: string;
   name: string;
   initialX: number;
+  onDrop: (id: string, name: string) => void;
 }
 
-const DragBox: React.FC<DragBoxProps> = ({ name, initialX }) => {
+const DragBox: React.FC<DragBoxProps> = ({ id, name, initialX, onDrop }) => {
   const [position, setPosition] = useState({ x: initialX, y: 180 });
   const [isDragging, setIsDragging] = useState(false);
   const offset = useRef({ x: 0, y: 0 });
@@ -23,7 +26,6 @@ const DragBox: React.FC<DragBoxProps> = ({ name, initialX }) => {
       if (!isDragging) return;
       setIsDragging(false);
       
-      // Logique de zone (DropZone)
       const zoneWidth = 800;
       const zoneHeight = 380;
       const minX = window.innerWidth - (zoneWidth + 50);
@@ -32,7 +34,7 @@ const DragBox: React.FC<DragBoxProps> = ({ name, initialX }) => {
       const maxY = 600 + zoneHeight;
 
       if (e.clientX > minX && e.clientX < maxX && e.clientY > minY && e.clientY < maxY) {
-        console.log(`${name} utilisé dans la zone !`);
+        onDrop(id, name); 
       }
     };
 
@@ -45,7 +47,7 @@ const DragBox: React.FC<DragBoxProps> = ({ name, initialX }) => {
       window.removeEventListener('mousemove', handleGlobalMouseMove);
       window.removeEventListener('mouseup', handleGlobalMouseUp);
     };
-  }, [isDragging, name]);
+  }, [isDragging, id, name, onDrop]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true);
@@ -55,30 +57,18 @@ const DragBox: React.FC<DragBoxProps> = ({ name, initialX }) => {
     };
   };
 
-  const floatStyle: React.CSSProperties = {
-    position: 'absolute',
-    left: `${position.x}px`,
-    top: `${position.y}px`,
-    width: '160px',
-    height: '160px',
-    backgroundColor: 'rgba(10, 10, 10, 0.9)',
-    borderRadius: '20px',
-    cursor: isDragging ? 'grabbing' : 'grab',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    boxShadow: '0 15px 30px rgba(0,0,0,0.4)',
-    zIndex: 1000,
-    userSelect: 'none',
-    border: '2px solid #A88752',
-    transition: isDragging ? 'none' : 'transform 0.1s ease',
-  };
-
   return (
-    <div style={floatStyle} onMouseDown={handleMouseDown}>
-      <div style={{ textAlign: 'center', color: '#267d2a', fontWeight: 'bold' }}>
-        <div style={{ fontSize: '1.2rem' }}>{name}</div>
-        <span style={{ fontSize: '0.7rem', fontWeight: 'normal' }}>Ingrédient</span>
+    <div 
+      className={`drag-box ${isDragging ? 'dragging' : ''}`}
+      style={{ 
+        left: `${position.x}px`, 
+        top: `${position.y}px` 
+      }} 
+      onMouseDown={handleMouseDown}
+    >
+      <div className="drag-box-content">
+        <div className="drag-box-name">{name}</div>
+        <span className="drag-box-label">Ingrédient</span>
       </div>
     </div>
   );
