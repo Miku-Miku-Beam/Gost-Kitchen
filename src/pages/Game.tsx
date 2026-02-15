@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Game.css';
-
+import { API_BASE_URL } from '../config';
 // Assets & Composants
 import retour from '../assets/retour.png';
 import Marcket from '../assets/Market Icon.png';
@@ -16,32 +16,26 @@ const Game: React.FC = () => {
   const navigate = useNavigate();
 
   // --- ÉTATS (STATES) ---
-  
-  // Liste complète des ingrédients possédés par le joueur
   const [inventory, setInventory] = useState<any[]>([]);
-  // Score actuel de la session
   const [score, setScore] = useState(0);
-  // Liste des recettes possibles récupérées depuis l'API
   const [recipes, setRecipes] = useState<any[]>([]);
-  // Ingrédients actuellement placés dans la DropZone pour cuisiner
   const [ingredientsInZone, setIngredientsInZone] = useState<{id: string, name: string}[]>([]);
 
   // --- EFFETS (LIFECYCLE) ---
 
-  // Initialisation : Récupération de l'inventaire local au chargement du composant
+  // Initialisation : Récupération de l'inventaire local
   useEffect(() => {
     const saved = localStorage.getItem('inventory');
     if (saved) setInventory(JSON.parse(saved));
   }, []);
 
-  // Chargement des données métier : Récupération des recettes via l'API Flask
+  // Chargement des données métier depuis l'API Flask
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:5000/api/laboratory/recipes/all');
+        const response = await fetch(`${API_BASE_URL}/laboratory/recipes/all`);
         const data = await response.json();
         
-        // Gestion de la structure de réponse API (tableau direct ou objet contenant une clé 'recipes')
         if (Array.isArray(data)) setRecipes(data);
         else if (data && Array.isArray(data.recipes)) setRecipes(data.recipes);
         else setRecipes([]);
@@ -55,17 +49,14 @@ const Game: React.FC = () => {
 
   // --- LOGIQUE MÉTIER ---
 
-  // Réinitialise l'inventaire du joueur (Local et State)
   const clearInventory = () => {
     localStorage.removeItem('inventory');
     setInventory([]);
     setIngredientsInZone([]);
   };
 
-  // Ajoute un ingrédient à la zone de préparation lors d'un "Drop" réussi
   const handleDropInZone = (id: string, name: string) => {
     setIngredientsInZone(prev => {
-      // Évite les doublons de la même instance (même ID) dans la zone
       const isAlreadyThere = prev.some(item => item.id === id);
       if (!isAlreadyThere) {
         return [...prev, { id, name }];
@@ -74,40 +65,54 @@ const Game: React.FC = () => {
     });
   };
 
-  // Vérifie si la zonz zqt triger par des ingrédient puis il les compares et met jour le score et l'inventaire de succès
+  /**
+   * Logique de cuisine :
+   * Compare les ingrédients présents dans la zone avec les recettes.
+   * La comparaison ignore les doublons, l'ordre et la casse.
+   */
   const handleCook = () => {
     if (ingredientsInZone.length === 0) {
       alert("La zone est vide !");
       return;
     }
 
-    // Extraction des noms pour la comparaison (la recette se base sur le nom, pas sur l'ID unique)
-    const currentIngredientNames = ingredientsInZone.map(item => item.name);
+    // 1. Préparation des noms de la zone (nettoyage et casse)
+    const namesInZoneSet = new Set(
+      ingredientsInZone.map(item => item.name.trim().toLowerCase())
+    );
 
-    // Recherche d'une recette correspondante
+    // 2. Recherche d'une recette correspondante
     const foundRecipe = recipes.find(recipe => {
-      // Vérification simple sur la quantité d'ingrédients
-      if (!recipe.ingredients || recipe.ingredients.length !== currentIngredientNames.length) return false;
+      // Sécurité : vérification que la recette possède des ingrédients
+      if (!recipe.ingredients || !Array.isArray(recipe.ingredients) || recipe.ingredients.length === 0) {
+        return false;
+      }
+
+      // Nettoyage des ingrédients de la recette et conversion en String pour TypeScript
+      const cleanRecipeIngredients = recipe.ingredients.map((ing: any) => 
+        String(ing).trim().toLowerCase()
+      );
       
-      // Tri alphabétique pour comparer les tableaux sans se soucier de l'ordre de dépôt
-      const recipeIngs = [...recipe.ingredients].sort();
-      const zoneIngs = [...currentIngredientNames].sort();
-      
-      return recipeIngs.every((val, index) => val === zoneIngs[index]);
+      const requiredIngredientsSet = new Set(cleanRecipeIngredients);
+
+      // Si le nombre de types d'ingrédients diffère, la recette ne correspond pas
+      if (namesInZoneSet.size !== requiredIngredientsSet.size) return false;
+
+      // Vérifie si chaque ingrédient requis est présent dans la zone
+      return [...requiredIngredientsSet].every(ingName => namesInZoneSet.has(ingName));
     });
 
     if (foundRecipe) {
       setScore(prev => prev + 100);
       alert(`Bravo ! Tu as fait : ${foundRecipe.name}`);
       
-      // Nettoyage de l'inventaire : On retire les IDs précis utilisés pour la recette
+      // Mise à jour de l'inventaire : retrait des objets utilisés
       const usedIds = ingredientsInZone.map(i => i.id);
       const remainingInventory = inventory.filter(item => !usedIds.includes(item._id));
       
       setInventory(remainingInventory);
       localStorage.setItem('inventory', JSON.stringify(remainingInventory));
       
-      // Reset de la zone de drop
       setIngredientsInZone([]);
     } else {
       alert("Combinaison inconnue...");
@@ -119,45 +124,39 @@ const Game: React.FC = () => {
 
   return (
     <div className="game-container">
-      {/* Affichage HUD (Score & Navigation) */}
       <div className="score-display">SCORE : {score}</div>
       
       <button className="back-button" onClick={() => navigate('/')} title="Retour à l'accueil">
         <img src={retour} alt="Retour" className="back-icon"/>
       </button>
 
-      {/* Actions globales sur l'inventaire */}
       {inventory.length > 0 && (
         <button className="clear-button" onClick={clearInventory}>
           Vider le frigo
         </button>
       )}
 
-      {/* Plan de travail (Étagère + Zone de Drop) */}
       <div className="inventory-banner">
         <button className="cook-button" onClick={handleCook}>
-          CUISINER 🍳
+          CUISINER
         </button>
 
         <button className="market-button" onClick={() => navigate('/MarketPlace')} title="Aller au marché">
             <img src={Marcket} alt="Market" className="market-icon" />
         </button>
         
-        {/* Décoration étagère */}
         <div className="banner-shelf"></div>
 
-        {/* Génération dynamique des boîtes d'ingrédients déplaçables */}
         {inventory.map((item, index) => (
           <DragBox 
-            key={`${item._id}-${index}`} // Clé unique React
+            key={`${item._id}-${index}`} 
             id={item._id} 
             name={item.name} 
-            initialX={100 + (index * 180)} // Positionnement horizontal automatique
+            initialX={100 + (index * 180)} 
             onDrop={handleDropInZone} 
           />
         ))}
 
-        {/* Cible de dépôt pour les DragBox */}
         <DropZone/>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Market.css';
+import { API_BASE_URL } from '../config';
 
 /**
  * Interface définissant la structure d'un objet Ingrédient
@@ -40,13 +41,15 @@ const MarketPlace: React.FC = () => {
     navigate('/game');
   };
 
-  // --- EFFETS (LIFECYCLE) --
+  // --- EFFETS (LIFECYCLE) ---
   
-  // Recupère la liste des ingrédients disponobles  vec une requète API (HTTP)
+  /**
+   * Récupère la liste des ingrédients disponibles avec une requête API (HTTP)
+   */
   useEffect(() => {
     const fetchIngredients = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:5000/api/laboratory/ingredients');
+        const response = await fetch(`${API_BASE_URL} /laboratory/ingredients`);
         if (!response.ok) throw new Error('Erreur réseau');
         
         const data = await response.json();
