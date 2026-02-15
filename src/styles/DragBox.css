@@ -1,0 +1,38 @@
+.drag-box {
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  background-color: rgba(10, 10, 10, 0.9);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+  z-index: 1000;
+  user-select: none;
+  border: 2px solid #A88752;
+  cursor: grab;
+  /* Transition par défaut pour un retour fluide */
+  transition: transform 0.1s ease;
+}
+
+/* État quand on attrape la boîte */
+.drag-box.dragging {
+  cursor: grabbing;
+  transition: none; /* Désactivé pendant le drag pour éviter la latence */
+}
+
+.drag-box-content {
+  text-align: center;
+  color: #267d2a;
+  font-weight: bold;
+}
+
+.drag-box-name {
+  font-size: 1.2rem;
+}
+
+.drag-box-label {
+  font-size: 0.7rem;
+  font-weight: normal;
+}

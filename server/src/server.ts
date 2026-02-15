@@ -10,6 +10,7 @@ import ordersRoutes from "./routes/order.routes";
 import marketRoutes from "./routes/marketplace.routes";
 import dashboardRoutes from "./routes/dashboard.routes";
 import { generateRandomOrder, stopAllTimers } from "./sockets/orderSocket";
+import path from "path"; // Ajoute cet import
 
 dotenv.config({ path: "./server/.env" });
 

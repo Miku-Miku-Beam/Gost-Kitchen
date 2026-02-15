@@ -1,23 +1,37 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import path from "path";
 
-dotenv.config({ path: "./server/.env" });
+// 1. On charge le .env avec un chemin absolu basé sur le dossier d'exécution
+dotenv.config({ path: path.resolve(process.cwd(), "server/.env") });
 
 export const connectDB = async (): Promise<void> => {
-  try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI as string);
+  const uri = process.env.MONGODB_URI;
 
-    console.log(`MongoDB connecté: ${conn.connection.host}`);
+  // 2. Sécurité : On vérifie si l'URI existe avant de tenter la connexion
+  if (!uri) {
+    console.error("❌ ERREUR : MONGODB_URI n'est pas défini dans le fichier .env");
+    console.log("Chemin vérifié :", path.resolve(process.cwd(), "server/.env"));
+    process.exit(1);
+  }
+
+  try {
+    // 3. Tentative de connexion
+    const conn = await mongoose.connect(uri);
+    
+    console.log(`✅ MongoDB connecté : ${conn.connection.host}`);
+    console.log(`📂 Base de données : ${conn.connection.name}`);
   } catch (error) {
-    console.error("Erreur de connexion MongoDB:", error);
-    process.exit(1); // Arrête le serveur si la connexion échoue
+    console.error("❌ Erreur de connexion MongoDB :", error);
+    process.exit(1);
   }
 };
 
+// 4. Gestion des événements de connexion
 mongoose.connection.on("disconnected", () => {
-  console.log("MongoDB déconnecté");
+  console.log("⚠️ MongoDB déconnecté");
 });
 
 mongoose.connection.on("error", (err) => {
-  console.error("Erreur MongoDB:", err);
+  console.error("🔥 Erreur critique MongoDB :", err);
 });
