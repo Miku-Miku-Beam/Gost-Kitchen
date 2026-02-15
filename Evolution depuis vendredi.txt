@@ -1,0 +1,5 @@
+ÉVOLUTION DU BACKEND DEPUIS VENDREDI
+
+Depuis la présentation de vendredi, le backend a été complété pour atteindre le niveau 16/20 "Restaurateur" avec un système économique complet. Le joueur démarre avec 1000€, tous les mouvements d'argent sont enregistrés dans la base de données (achats, ventes, pénalités), et le joueur perd si sa satisfaction tombe à 0 ou s'il n'a plus d'argent.
+
+Le système d'achat d'ingrédients fonctionne avec des prix qui vont de 5€ à 40€, les stocks diminuent automatiquement quand on sert un plat, et le jeu vérifie qu'on a bien les ingrédients nécessaires avant de servir. Un tableau de bord financier a été ajouté qui permet de voir l'argent gagné et dépensé, l'historique de toutes les transactions, comment se répartissent les dépenses, combien on gagne sur chaque recette, et comment le solde évolue au fil du temps. Tout est prêt pour afficher des graphiques sur le frontend.
