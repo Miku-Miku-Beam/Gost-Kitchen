@@ -7,4 +7,5 @@ Le système d'achat d'ingrédients fonctionne avec des prix qui vont de 5€ à 
 Depuis vendredi, j'ai surtout bossé sur la fiabilité du jeu pour qu'il n'y ait plus de bugs quand on cuisine. J'ai ajouté un système qui acceptent les recettes reconnues, peu importe l'ordre dans lequel on dépose les objets.
 
 J'ai aussi réalisé le système de commandes : une recette s'affiche au hasard avec un chrono de 5 minutes, et si tu la réussis à temps, tu gagnes un bonus de points. Enfin, j'ai sécurisé les liens avec le serveur en utilisant des variables d'environnement et j'ai fait en sorte que ton inventaire ne s'efface plus quand tu rafraîchis la page.
+
 Le système d'achat d'ingrédients fonctionne avec des prix qui vont de 5€ à 40€, les stocks diminuent automatiquement quand on sert un plat, et le jeu vérifie qu'on a bien les ingrédients nécessaires avant de servir. Un tableau de bord financier a été ajouté qui permet de voir l'argent gagné et dépensé, l'historique de toutes les transactions, comment se répartissent les dépenses, combien on gagne sur chaque recette, et comment le solde évolue au fil du temps. Tout est prêt pour afficher des graphiques sur le frontend.
