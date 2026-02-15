@@ -8,10 +8,10 @@
 
 Vous reprenez un restaurant légendaire « La Tour d'Émeraude », mais le chef précédent est parti avec le livre de recettes ! Vos placards et frigos sont vides. Vous devez :
 
-* Expérimenter au laboratoire pour redécouvrir les recettes.
-* Acheter intelligemment vos ingrédients au Marché.
-* Servir les commandes clients en moins de 5 minutes pour gagner des bonus.
-* Gérer votre score et votre progression.
+- Expérimenter au laboratoire pour redécouvrir les recettes
+- Acheter intelligemment vos ingrédients
+- Servir les clients en temps réel pour éviter la faillite
+- Gérer votre trésorerie et vos stocks
 
 ---
 
@@ -19,95 +19,141 @@ Vous reprenez un restaurant légendaire « La Tour d'Émeraude », mais le chef 
 
 ### Backend
 
-* **Node.js** avec **TypeScript**
-* **Express.js** - Framework web
-* **MongoDB** - Base de données NoSQL
-* **Socket.io** - WebSockets pour le temps réel
+- **Node.js** avec **TypeScript**
+- **Express.js** - Framework web
+- **MongoDB** - Base de données NoSQL
+- **Mongoose** - ODM pour MongoDB
+- **Socket.io** - WebSockets pour le temps réel
+- **JWT (jsonwebtoken)** - Authentification sécurisée
+- **bcryptjs** - Hashage des mots de passe
 
 ### Frontend
 
-* **React** avec **TypeScript**
-* **Vite** - Build tool (développement ultra-rapide)
-* **React Router** - Navigation entre les pages
-* **Local Storage** - Persistance de l'inventaire joueur
+- **React** avec **TypeScript**
+- **Vite** - Build tool
+- **React Router** - Navigation
+- **Axios** - Requêtes HTTP
+- **Socket.io-client** - Client WebSocket
 
 ---
 
 ## Prérequis
 
-* **Node.js** (v18 ou supérieur)
-* **MongoDB** (v6 ou supérieur)
-* **npm** (installé avec Node)
+Avant de commencer, assurez-vous d'avoir installé :
+
+- **Node.js** (v18 ou supérieur) - [Télécharger ici](https://nodejs.org/)
+- **MongoDB** (v6 ou supérieur) - [Télécharger ici](https://www.mongodb.com/try/download/community)
+- **npm** (inclus avec Node.js)
 
 ---
 
 ## Installation
 
-### 1. Cloner le repository
+### 1️ Cloner le repository
 
 ```bash
 git clone <https://github.com/Miku-Miku-Beam/Gost-Kitchen.git>
 cd Gost_Kitchen
-
 ```
 
-### 2. Installer les dépendances
+### 2 Installer les dépendances
 
 ```bash
 npm install
-
 ```
 
-### 3. Configurer les variables d'environnement
+### 3️ Configurer les variables d'environnement
 
-**Pour le Backend :**
-Créez un fichier `server/.env` :
+Créez le fichier `server/.env` :
 
 ```env
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017/ghost-kitchen
-JWT_SECRET=votre_secret_securise
-
-```
-
-**Pour le Frontend :**
-Créez un fichier `.env` à la racine du projet (Gost_Kitchen/) :
-
-```env
-VITE_API_URL=http://localhost:5000/api
-
+JWT_SECRET=votre_secret_super_securise
+NODE_ENV=development
 ```
 
 ---
 
 ## Configuration de la Base de Données
 
-### 1. Démarrer MongoDB
+### 1️ Démarrer MongoDB
 
-Assurez-vous que votre instance MongoDB tourne localement sur le port 27017.
+**Sur Windows :**
 
-### 2. Initialiser les données (Seed)
+```bash
+# MongoDB doit être démarré en tant que service
+# Vérifiez qu'il tourne avec :
+mongosh
+```
+
+**Sur macOS :**
+
+```bash
+brew services start mongodb-community
+```
+
+**Sur Linux :**
+
+```bash
+sudo systemctl start mongod
+```
+
+### 2️ Initialiser la base de données (Seed)
+
+Le seed remplit la base avec :
+
+- **15 ingrédients** avec leurs prix
+- **7 recettes** avec leurs prix de vente
+- Toutes les données de base nécessaires au jeu
 
 ```bash
 npm run seed
+```
 
+**Sortie attendue :**
+
+```
+MongoDB connecté: localhost
+Nettoyage de la base de données...
+Création des ingrédients...
+15 ingrédients créés
+Création des recettes...
+7 recettes créées
+
+Base de données initialisée avec succès !
+Total: 15 ingrédients, 7 recettes
 ```
 
 ---
 
-## Démarrage du Projet
+## Démarrage du Serveur
 
-### Mode Complet
+### Mode Développement (Backend uniquement)
 
-Lancez le backend et le frontend simultanément :
+```bash
+npm run server
+```
+
+**Sortie attendue :**
+
+```
+Serveur démarré sur le port 5000
+Frontend attendu sur http://localhost:5173
+WebSocket prêt pour les commandes
+MongoDB connecté: localhost
+```
+
+### Mode Développement (Frontend + Backend)
 
 ```bash
 npm run dev:full
-
 ```
 
-* **Frontend** : `http://localhost:5173`
-* **Backend API** : `http://localhost:5000`
+Cela lance simultanément :
+
+- Le serveur backend sur `http://localhost:5000`
+- Le serveur frontend sur `http://localhost:5173`
 
 ---
 
@@ -116,28 +162,10 @@ npm run dev:full
 ```
 Gost_Kitchen/
 ├── src/                          # Frontend React
-│   ├── assets/                   # Ressources statiques (Images, SVG)
-│   │   ├── logo poèle.svg        
-│   │   ├── Market Icon.png       
-│   │   ├── react.svg             
-│   │   └── retour.png            
-│   │
-│   ├── components/               # Composants réutilisables
-│   │   ├── DragBox.tsx           
-│   │   └── DropZone.tsx         
-│   │
-│   ├── pages/                    # Vues principales (Pages)
-│   │   ├── Game.tsx              
-│   │   ├── LoginForm.tsx         
-│   │   ├── Market.tsx            
-│   │   └── Register.tsx          
-│   │
-│   ├── services/                 # Appels API et WebSockets
-│   ├── styles/                   # Fichiers CSS (Game.css, Market.css, etc.)
-│   ├── App.tsx                  
-│   ├── config.ts                 
-│   ├── main.tsx                  
-│                
+│   ├── components/
+│   ├── services/
+│   │   └── api.ts
+│   └── ...
 │
 ├── server/                       # Backend Node.js
 │   ├── src/
@@ -173,5 +201,6 @@ Gost_Kitchen/
 │
 ├── package.json
 └── README.md
-
 ```
+
+---
