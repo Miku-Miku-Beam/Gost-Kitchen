@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Game.css';
 import { API_BASE_URL } from '../config';
@@ -10,7 +10,8 @@ import DropZone from '../components/DropZone';
 
 /**
  * Composant principal du jeu de cuisine.
- * Gère l'inventaire, la zone de préparation et la logique de création de recettes.
+ * Gère l'inventaire, la zone de préparation, la logique de création de recettes
+ * et le système de commandes minutées.
  */
 const Game: React.FC = () => {
   const navigate = useNavigate();
@@ -20,6 +21,25 @@ const Game: React.FC = () => {
   const [score, setScore] = useState(0);
   const [recipes, setRecipes] = useState<any[]>([]);
   const [ingredientsInZone, setIngredientsInZone] = useState<{id: string, name: string}[]>([]);
+  
+  // États pour le système de commande
+  const [currentOrder, setCurrentOrder] = useState<any | null>(null);
+  const [timeLeft, setTimeLeft] = useState<number>(300); // 300 secondes = 5 minutes
+  const [isOrderActive, setIsOrderActive] = useState<boolean>(false);
+
+  // --- LOGIQUE MÉTIER ---
+
+  /**
+   * Génère une nouvelle commande aléatoire parmi les recettes disponibles.
+   */
+  const generateOrder = useCallback(() => {
+    if (recipes.length > 0) {
+      const randomIndex = Math.floor(Math.random() * recipes.length);
+      setCurrentOrder(recipes[randomIndex]);
+      setTimeLeft(300);
+      setIsOrderActive(true);
+    }
+  }, [recipes]);
 
   // --- EFFETS (LIFECYCLE) ---
 
@@ -36,9 +56,11 @@ const Game: React.FC = () => {
         const response = await fetch(`${API_BASE_URL}/laboratory/recipes/all`);
         const data = await response.json();
         
-        if (Array.isArray(data)) setRecipes(data);
-        else if (data && Array.isArray(data.recipes)) setRecipes(data.recipes);
-        else setRecipes([]);
+        let loadedRecipes = [];
+        if (Array.isArray(data)) loadedRecipes = data;
+        else if (data && Array.isArray(data.recipes)) loadedRecipes = data.recipes;
+        
+        setRecipes(loadedRecipes);
       } catch (err) {
         console.error("Erreur lors de la récupération des recettes:", err);
         setRecipes([]);
@@ -47,8 +69,29 @@ const Game: React.FC = () => {
     fetchRecipes();
   }, []);
 
-  // --- LOGIQUE MÉTIER ---
+  // Lancer la première commande dès que les recettes sont chargées
+  useEffect(() => {
+    if (recipes.length > 0 && !currentOrder) {
+      generateOrder();
+    }
+  }, [recipes, currentOrder, generateOrder]);
 
+  // Gestion du compte à rebours de la commande
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isOrderActive && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0 && isOrderActive) {
+      setIsOrderActive(false);
+      alert("Temps écoulé ! La commande a expiré.");
+      generateOrder();
+    }
+    return () => clearInterval(timer);
+  }, [isOrderActive, timeLeft, generateOrder]);
+
+  // Actions de nettoyage
   const clearInventory = () => {
     localStorage.removeItem('inventory');
     setInventory([]);
@@ -67,8 +110,7 @@ const Game: React.FC = () => {
 
   /**
    * Logique de cuisine :
-   * Compare les ingrédients présents dans la zone avec les recettes.
-   * La comparaison ignore les doublons, l'ordre et la casse.
+   * Vérifie la recette et accorde un bonus si elle correspond à la commande actuelle.
    */
   const handleCook = () => {
     if (ingredientsInZone.length === 0) {
@@ -76,43 +118,41 @@ const Game: React.FC = () => {
       return;
     }
 
-    // 1. Préparation des noms de la zone (nettoyage et casse)
     const namesInZoneSet = new Set(
       ingredientsInZone.map(item => item.name.trim().toLowerCase())
     );
 
-    // 2. Recherche d'une recette correspondante
     const foundRecipe = recipes.find(recipe => {
-      // Sécurité : vérification que la recette possède des ingrédients
       if (!recipe.ingredients || !Array.isArray(recipe.ingredients) || recipe.ingredients.length === 0) {
         return false;
       }
-
-      // Nettoyage des ingrédients de la recette et conversion en String pour TypeScript
       const cleanRecipeIngredients = recipe.ingredients.map((ing: any) => 
         String(ing).trim().toLowerCase()
       );
-      
       const requiredIngredientsSet = new Set(cleanRecipeIngredients);
-
-      // Si le nombre de types d'ingrédients diffère, la recette ne correspond pas
       if (namesInZoneSet.size !== requiredIngredientsSet.size) return false;
-
-      // Vérifie si chaque ingrédient requis est présent dans la zone
       return [...requiredIngredientsSet].every(ingName => namesInZoneSet.has(ingName));
     });
 
     if (foundRecipe) {
-      setScore(prev => prev + 100);
-      alert(`Bravo ! Tu as fait : ${foundRecipe.name}`);
+      let finalGain = 100;
+      let alertMessage = `Bravo ! Tu as fait : ${foundRecipe.name}`;
+
+      // Vérification si la recette correspond à la commande en cours
+      if (currentOrder && foundRecipe._id === currentOrder._id) {
+        finalGain += 5;
+        alertMessage = `Excellent ! Commande honorée : ${foundRecipe.name} (+5 points bonus)`;
+        generateOrder(); // On passe à la commande suivante
+      }
+
+      setScore(prev => prev + finalGain);
+      alert(alertMessage);
       
-      // Mise à jour de l'inventaire : retrait des objets utilisés
       const usedIds = ingredientsInZone.map(i => i.id);
       const remainingInventory = inventory.filter(item => !usedIds.includes(item._id));
       
       setInventory(remainingInventory);
       localStorage.setItem('inventory', JSON.stringify(remainingInventory));
-      
       setIngredientsInZone([]);
     } else {
       alert("Combinaison inconnue...");
@@ -120,11 +160,36 @@ const Game: React.FC = () => {
     }
   };
 
+  // Formatage du temps restant (MM:SS)
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
   // --- RENDU (UI) ---
 
   return (
     <div className="game-container">
+      {/* HUD Score */}
       <div className="score-display">SCORE : {score}</div>
+
+      {/* Interface de la Commande Actuelle */}
+      <div className="order-panel">
+        {currentOrder ? (
+          <div className="order-card">
+            <h3 className="order-title">COMMANDE : {currentOrder.name}</h3>
+            <p className={`order-timer ${timeLeft < 30 ? 'critical' : ''}`}>
+              Temps : {formatTime(timeLeft)}
+            </p>
+            <div className="order-needs">
+              Ingrédients : {currentOrder.ingredients.join(', ')}
+            </div>
+          </div>
+        ) : (
+          <div className="order-card">Recherche de commande...</div>
+        )}
+      </div>
       
       <button className="back-button" onClick={() => navigate('/')} title="Retour à l'accueil">
         <img src={retour} alt="Retour" className="back-icon"/>
