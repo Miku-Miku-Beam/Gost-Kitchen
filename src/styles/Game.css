@@ -1,0 +1,109 @@
+/* Conteneur principal */
+.game-container {
+  position: relative;
+  min-height: 100vh;
+  width: 100vw;
+  background-color: #242424;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Affichage du Score */
+.score-display {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2.5rem;
+  color: #A88752;
+  font-weight: bold;
+  z-index: 100;
+  text-shadow: 2px 2px 0 #000;
+}
+
+/* Bouton Retour (en haut à gauche) */
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.back-icon {
+  width: 50px;
+}
+
+/* Bouton Vider le frigo */
+.clear-button {
+  position: absolute;
+  top: 20px;
+  right: 140px;
+  padding: 10px 20px;
+  background-color: #000;
+  color: #44cf4a;
+  border: 2px solid #A88752;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+  z-index: 100;
+}
+
+/* Bannière / Plan de travail */
+.inventory-banner {
+  position: absolute;
+  width: 100%;
+  height: 150px;
+  background-color: #A88752;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+/* Bordure du plan de travail */
+.banner-shelf {
+  width: 100%;
+  height: 50px;
+  background-color: #806952;
+}
+
+/* Bouton CUISINER */
+.cook-button {
+  position: absolute;
+  top: -30px;
+  padding: 12px 30px;
+  background-color: #267d2a;
+  color: #FFF;
+  border: 3px solid #000;
+  border-radius: 15px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 110;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+  transition: background-color 0.2s;
+}
+
+.cook-button:hover {
+  background-color: #1e6321;
+}
+
+/* Bouton Market */
+.market-button {
+  position: absolute;
+  top: 0px;
+  right: 20px;
+  width: 100px;
+  height: 100px;
+  background-color: #A88752;
+  border: none;
+  cursor: pointer;
+}
+
+.market-icon {
+  width: 100%;
+}
